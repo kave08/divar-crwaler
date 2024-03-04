@@ -1,3 +1,4 @@
+import pandas as pd
 import requests
 from threading import Thread
 import time
@@ -40,16 +41,12 @@ class Scraping:
 
     def save_to_file(self, filePath):
         try:
-            self.delete_file(filePath)
-            with open(filePath, 'a', encoding='utf-8') as file:
-                if self.apartments:  # Check if the list is not empty
-                    for ad in self.apartments:
-                        file.write(f"Title: {ad.title}\nPrice: {ad.price}\nLink: {ad.link}\n\n")
-                    self.apartments = []  # Clear the list after saving
-                else:
-                    print("No ads found.")
-        except IOError as e:
+            df = pd.DataFrame([(ad.title, ad.price, ad.link) for ad in self.apartments], columns=['Title', 'Price', 'Link'])
+            df.to_excel(filePath, index=False)
+            self.apartments = []
+        except Exception as e:
             print(f"Error: {e}")
+
     def delete_file(self,filePath):
         if os.path.exists(filePath):
             os.remove(filePath)
@@ -68,7 +65,7 @@ def scrape_divar(targetURL, filePath):
 
 if __name__ == "__main__":
     targetURL = "https://divar.ir/s/tehran/buy-apartment/navvab?districts=1006%2C197%2C275%2C284%2C94&price=1800000000-2500000000"
-    filePath = "ScrapDivar.txt"
+    filePath = "ScrapDivar.xlsx"
 
     while True:
         ThreadReceiveNewAdvertisement = Thread(target=scrape_divar, args=(targetURL, filePath))
