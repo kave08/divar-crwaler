@@ -8,6 +8,8 @@ import os
 
 from models import Apartment
 
+persian_to_english_table = str.maketrans('۰۱۲۳۴۵۶۷۸۹', '0123456789')
+
 class Scraping:
     def __init__(self, targetURL) -> None:
         self.targetURL = targetURL
@@ -32,7 +34,8 @@ class Scraping:
         link_matches = link_pattern.finditer(htmlContent)
 
         for title_match, price_match, link_match in zip(title_matches, price_mathces, link_matches):
-           self.add_apartment(title_match.group(1), price_match.group(1),"https://divar.ir"+ link_match.group(1))
+           price = price_match.group(1).translate(persian_to_english_table).replace(',','').replace('تومان','')
+           self.add_apartment(title_match.group(1), price ,"https://divar.ir"+ link_match.group(1))
 
 
     def add_apartment(self, title, price, link):
