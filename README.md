@@ -1,2 +1,2 @@
 # divar-crwaler
-simple Divar crawler to get house price based on your selected distraction!
+simple Divar crawler to get house price based on your selected district!
